@@ -1,4 +1,4 @@
-import { json, type APIEvent } from "@solidjs/start/server";
+import type { APIEvent } from "@solidjs/start/server";
 import { db } from "~/db/client";
 import { siteEvents } from "~/db/schema";
 import { cleanEnum, cleanObject, cleanString, extractIp, readJson } from "~/server/utils";
@@ -11,15 +11,15 @@ const EVENT_TYPES = [
   "demo_dispute",
 ] as const;
 
-export const POST = async (event: APIEvent) => {
+export async function POST(event: APIEvent) {
   const data = await readJson(event);
   if (!data) {
-    return json({ ok: false, error: "Invalid JSON body." }, { status: 400 });
+    return Response.json({ ok: false, error: "Invalid JSON body." }, { status: 400 });
   }
 
   const eventType = cleanEnum(data.eventType, EVENT_TYPES);
   if (!eventType) {
-    return json({ ok: false, error: "Unknown event type." }, { status: 422 });
+    return Response.json({ ok: false, error: "Unknown event type." }, { status: 422 });
   }
 
   await db.insert(siteEvents).values({
@@ -36,5 +36,5 @@ export const POST = async (event: APIEvent) => {
     metadata: cleanObject(data.metadata),
   });
 
-  return json({ ok: true });
-};
+  return Response.json({ ok: true });
+}
