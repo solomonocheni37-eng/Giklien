@@ -1,4 +1,4 @@
-import { MetaProvider, Title } from "@solidjs/meta";
+import { Link, MetaProvider, Title } from "@solidjs/meta";
 import { Router } from "@solidjs/router";
 import { FileRoutes } from "@solidjs/start/router";
 import { Suspense, type ParentProps } from "solid-js";
@@ -9,7 +9,10 @@ export default function App() {
     <Router
       root={(props: ParentProps) => (
         <MetaProvider>
-          <Title>Giklien — Lien waiver compliance for mid-market GCs</Title>
+          <Title>
+            Giklien | No-Login Lien Waiver Automation for General Contractors
+          </Title>
+          <Link rel="icon" type="image/svg+xml" href="/favicon.svg" />
           <Suspense fallback={<div class="pad-hint">Loading…</div>}>
             {props.children}
           </Suspense>

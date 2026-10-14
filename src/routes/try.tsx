@@ -16,7 +16,6 @@ export default function Try() {
   const [consentAuthority, setConsentAuthority] = createSignal(false);
   const [consentAccuracy, setConsentAccuracy] = createSignal(false);
 
-  // Exact epoch ms each checkbox was affirmed (evidence log, page 3).
   const [consentLog, setConsentLog] = createSignal<(number | null)[]>([
     null,
     null,
@@ -33,7 +32,7 @@ export default function Try() {
   const [saving, setSaving] = createSignal(false);
   const [error, setError] = createSignal("");
   const [audit, setAudit] = createSignal<AuditData | null>(null);
-  const [disputed, setDisputed] = createSignal(false);
+  const [disputeOpen, setDisputeOpen] = createSignal(false);
 
   let mountedAt = 0;
 
@@ -110,7 +109,7 @@ export default function Try() {
   }
 
   function dispute() {
-    setDisputed(true);
+    setDisputeOpen(true);
     track("demo_dispute", {});
   }
 
@@ -227,13 +226,6 @@ export default function Try() {
                 </button>
               </div>
 
-              <Show when={disputed()}>
-                <p class="info">
-                  In production this instantly notifies the GC and blocks signing,
-                  so the statutory form is never altered by the signer.
-                </p>
-              </Show>
-
               <Show when={error()}>
                 <p class="error">{error()}</p>
               </Show>
@@ -270,6 +262,32 @@ export default function Try() {
           )}
         </Show>
       </main>
+
+      <Show when={disputeOpen()}>
+        <div class="modal-backdrop" onClick={() => setDisputeOpen(false)}>
+          <div
+            class="modal"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="dispute-title"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div class="stamp" style="position:static; display:inline-block; transform:rotate(-4deg); margin-bottom:12px;">
+              Stop work
+            </div>
+            <h3 id="dispute-title">Dispute recorded</h3>
+            <p>
+              In production, this stops the signing process and sends an alert to
+              the GC Controller to resolve the invoice discrepancy.
+            </p>
+            <div class="button-row">
+              <button class="btn btn-ink" onClick={() => setDisputeOpen(false)}>
+                Got it
+              </button>
+            </div>
+          </div>
+        </div>
+      </Show>
 
       <footer class="footer">
         <div class="container narrow">

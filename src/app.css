@@ -18,24 +18,17 @@
 * { box-sizing: border-box; }
 html { scroll-behavior: smooth; }
 
+/* Blueprint grid lives in the plain background: zero extra paint layers. */
 body {
   margin: 0;
   color: var(--ink);
   font-family: "Inter", system-ui, -apple-system, Segoe UI, sans-serif;
-  background: var(--paper);
   min-height: 100vh;
-}
-
-/* Faint blueprint grid — drafting-table vibes */
-body::before {
-  content: "";
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  background-image:
+  background:
     linear-gradient(rgba(30, 64, 175, 0.06) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(30, 64, 175, 0.06) 1px, transparent 1px);
-  background-size: 32px 32px;
+    linear-gradient(90deg, rgba(30, 64, 175, 0.06) 1px, transparent 1px),
+    var(--paper);
+  background-size: 32px 32px, 32px 32px, auto;
 }
 
 ::selection { background: var(--hl); }
@@ -52,13 +45,12 @@ a { color: var(--blue); }
 .container { width: min(1100px, calc(100% - 40px)); margin-inline: auto; }
 .container.narrow { width: min(780px, calc(100% - 40px)); }
 
-/* ---------- Nav ---------- */
+/* ---------- Nav: solid paper, no blur layer ---------- */
 .nav {
   position: sticky;
   top: 0;
   z-index: 50;
-  background: rgba(246, 244, 238, 0.92);
-  backdrop-filter: blur(10px);
+  background: #f6f4ee;
   border-bottom: 2px solid var(--ink);
 }
 
@@ -271,6 +263,7 @@ a { color: var(--blue); }
   box-shadow: 10px 12px 0 rgba(28, 25, 23, 0.08), 0 2px 10px rgba(28, 25, 23, 0.1);
 }
 
+/* If repaint ghosting ever returns on Linux Chrome, set these two to none. */
 .tilt-l { transform: rotate(-1.2deg); }
 .tilt-r { transform: rotate(1deg); }
 
@@ -439,6 +432,33 @@ a { color: var(--blue); }
   color: var(--muted);
 }
 
+/* ---------- Page 3: evidence log ---------- */
+.sheet-stack.three { grid-template-columns: repeat(3, 1fr); gap: 22px; }
+
+.stack-v { display: grid; gap: 26px; margin-top: 22px; }
+
+.cert-group {
+  margin: 12px 0 4px;
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--amber);
+  border-bottom: 1px solid var(--line);
+  padding-bottom: 4px;
+}
+
+.sig-thumb {
+  width: 100%;
+  height: 72px;
+  object-fit: contain;
+  background: #ffffff;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  margin-top: 6px;
+}
+
 /* ---------- Offer ---------- */
 .offer-flex {
   display: flex;
@@ -573,6 +593,36 @@ input:focus, select:focus, textarea:focus {
 
 .button-row { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 12px; }
 
+/* ---------- Dispute modal: flat overlay, no blur ---------- */
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  background: rgba(28, 25, 23, 0.5);
+  display: grid;
+  place-items: center;
+  padding: 20px;
+}
+
+.modal {
+  position: relative;
+  width: min(460px, 100%);
+  background: var(--sheet);
+  border: 2px solid var(--ink);
+  border-radius: 14px;
+  padding: 26px;
+  box-shadow: 8px 8px 0 rgba(28, 25, 23, 0.35);
+}
+
+.modal h3 { margin: 0 0 10px; font-size: 20px; }
+
+.modal p {
+  margin: 0 0 18px;
+  color: var(--muted);
+  line-height: 1.65;
+  font-size: 14.5px;
+}
+
 /* ---------- Footer: ink band ---------- */
 .footer {
   margin-top: 70px;
@@ -584,6 +634,10 @@ input:focus, select:focus, textarea:focus {
 }
 
 /* ---------- Responsive ---------- */
+@media (max-width: 1100px) {
+  .sheet-stack.three { grid-template-columns: 1fr; }
+}
+
 @media (max-width: 900px) {
   .sheet-stack { grid-template-columns: 1fr; }
   .tilt-l, .tilt-r { transform: none; }
@@ -591,35 +645,4 @@ input:focus, select:focus, textarea:focus {
   .form-row { grid-template-columns: 1fr; }
   .hero { padding-top: 60px; }
   .offer-flex { flex-direction: column; align-items: flex-start; }
-}
-
-/* ---------- Page 3: evidence log ---------- */
-.sheet-stack.three { grid-template-columns: repeat(3, 1fr); gap: 22px; }
-
-.stack-v { display: grid; gap: 26px; margin-top: 22px; }
-
-.cert-group {
-  margin: 12px 0 4px;
-  font-family: var(--mono);
-  font-size: 10px;
-  font-weight: 600;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: var(--amber);
-  border-bottom: 1px solid var(--line);
-  padding-bottom: 4px;
-}
-
-.sig-thumb {
-  width: 100%;
-  height: 72px;
-  object-fit: contain;
-  background: #ffffff;
-  border: 1px solid var(--line);
-  border-radius: 6px;
-  margin-top: 6px;
-}
-
-@media (max-width: 1100px) {
-  .sheet-stack.three { grid-template-columns: 1fr; }
 }
